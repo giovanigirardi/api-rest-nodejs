@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import { knex } from "./database";
+import { env } from "./env";
 
 const server = fastify();
 
@@ -9,4 +10,4 @@ server.get("/hello", async () => {
 	return transactions;
 });
 
-server.listen({ port: 3333 });
+server.listen({ port: env.PORT });
