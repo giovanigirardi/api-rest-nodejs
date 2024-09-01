@@ -1,3 +1,3 @@
 {
-	"conventionalCommits.scopes": ["ENV", "Routes", "Types"]
+	"conventionalCommits.scopes": ["ENV", "Routes", "Types", "Transactions"]
 }
