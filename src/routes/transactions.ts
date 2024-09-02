@@ -3,23 +3,26 @@ import type { FastifyInstance } from "fastify";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { knex } from "../database";
+import { checkSessionIdExists } from "../middlewares/check-session-id-exists";
 
-// biome-ignore lint/suspicious/useAwait: Fastify plugins need to be async functions
 export async function transactionsRoutes(server: FastifyInstance) {
-	server.get("/", async () => {
-		const transactions = await knex("transactions").select();
+	server.get("/", { preHandler: [checkSessionIdExists] }, async (request) => {
+		const { sessionId } = request.cookies;
+
+		const transactions = await knex("transactions").select().where({ session_id: sessionId });
 
 		return { transactions };
 	});
 
-	server.get("/:id", async (request, reply) => {
+	server.get("/:id", { preHandler: [checkSessionIdExists] }, async (request, reply) => {
 		const getTransactionParamsSchema = z.object({
 			id: z.string().uuid(),
 		});
 
 		const { id } = getTransactionParamsSchema.parse(request.params);
+		const { sessionId } = request.cookies;
 
-		const transaction = await knex("transactions").select().where({ id }).first();
+		const transaction = await knex("transactions").select().where({ id, session_id: sessionId }).first();
 
 		if (!transaction) {
 			reply.status(404).send({ message: "Transaction not found" });
@@ -29,8 +32,10 @@ export async function transactionsRoutes(server: FastifyInstance) {
 		return { transaction };
 	});
 
-	server.get("/summary", async () => {
-		const summary = await knex("transactions").sum("amount", { as: "amount" }).first();
+	server.get("/summary", { preHandler: [checkSessionIdExists] }, async (request) => {
+		const { sessionId } = request.cookies;
+
+		const summary = await knex("transactions").where({ session_id: sessionId }).sum("amount", { as: "amount" }).first();
 
 		if (!summary) {
 			return { summary: 0 };

@@ -7,9 +7,7 @@ declare module "knex/types/tables" {
 			id: string;
 			title: string;
 			amount: number;
-			// biome-ignore lint/style/useNamingConvention: The column name is defined by the database schema
 			created_at: string;
-			// biome-ignore lint/style/useNamingConvention: The column name is defined by the database schema
 			session_id?: string;
 		};
 	}
