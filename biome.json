@@ -5,6 +5,7 @@
 	},
 	"linter": {
 		"enabled": true,
+		"ignore": ["node_modules", "build"],
 		"rules": {
 			"recommended": true,
 			"correctness": {
@@ -14,6 +15,7 @@
 	},
 	"formatter": {
 		"lineWidth": 120,
-		"formatWithErrors": true
+		"formatWithErrors": true,
+		"ignore": ["node_modules", "build"]
 	}
 }
